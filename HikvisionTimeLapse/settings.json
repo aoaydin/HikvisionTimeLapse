@@ -1,0 +1,21 @@
+{
+  "RtspUrl": "rtsp://192.168.20.209:554/Streaming/Channels/101",
+  "Username": "admin",
+  "Password": "1q2w3e4r",
+  "PhotosRootDirectory": "photos",
+  "OutputDirectory": "output",
+  "CaptureRetryCount": 3,
+  "CaptureRetryDelayMs": 1500,
+  "CaptureOpenTimeoutMs": 8000,
+  "DailyCaptureTimes": [
+    "10:00",
+    "13:00",
+    "16:30"
+  ],
+  "DefaultFps": 25,
+  "DefaultWidth": 1920,
+  "DefaultHeight": 1080
+}
+
+
+
