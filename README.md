@@ -122,5 +122,3 @@ See Turkish section for details. In short: install .NET 8 SDK, build the solutio
 
 ## Lisans
 Bu repo örnek amaçlı hazırlanmıştır. Kurum içi/kişisel kullanım için serbestçe uyarlayabilirsiniz.
-
-# Time-LapseC#
