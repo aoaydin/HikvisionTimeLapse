@@ -25,10 +25,14 @@ All notable changes to this project will be documented in this file.
 - Minimize behavior: minimized to tray; close button exits app (user request).
 - Start/Stop buttons toggle enabled state according to running scheduler.
 - Time list normalization to HH:mm, de‑duplication and ordering.
+- Multi‑camera timelapse ordering now uses parsed datetime (yyyy-MM-dd/HH-mm-ss) from file path, not raw path string.
+- `TestConnectionAsync` uses CancellationToken and ensures proper release on timeout.
+- Tests read camera credentials from environment variables (CAM_RTSP, CAM_USER, CAM_PASS).
 
 ### Fixed
 - Quartz ObjectAlreadyExistsException for jobs/triggers by rescheduling when existing.
 - Designer initialization issue for test capture button.
+- Removed unused `Class1.cs` from Core project.
 
 ### Notes
 - Multi‑camera timelapse interleaves frames by timestamp order; optional per‑camera video output can be added later.

@@ -118,20 +118,28 @@ public sealed class CaptureService : ICaptureService
 
     public async Task<bool> TestConnectionAsync(string rtspUrl, int openTimeoutMs)
     {
+        using var cts = new System.Threading.CancellationTokenSource(openTimeoutMs);
         try
         {
             using var capture = new VideoCapture();
-            var openTask = Task.Run(() => capture.Open(rtspUrl, VideoCaptureAPIs.FFMPEG));
-            var completed = await Task.WhenAny(openTask, Task.Delay(openTimeoutMs));
-            if (completed != openTask) return false;
+            var token = cts.Token;
+            var openTask = Task.Run(() => capture.Open(rtspUrl, VideoCaptureAPIs.FFMPEG), token);
+            using var delayCts = new System.Threading.CancellationTokenSource(openTimeoutMs);
+            var completed = await Task.WhenAny(openTask, Task.Delay(openTimeoutMs, delayCts.Token));
+            if (completed != openTask)
+            {
+                try { capture.Release(); } catch { }
+                return false;
+            }
             if (!capture.IsOpened()) return false;
             using var frame = new Mat();
-            // Warm-up
+            // Warm-up with cancellation checks
             var readOk = false;
-            for (int i = 0; i < 3; i++)
+            for (int i = 0; i < 3 && !token.IsCancellationRequested; i++)
             {
                 readOk = capture.Read(frame) || readOk;
             }
+            capture.Release();
             return readOk && !frame.Empty();
         }
         catch

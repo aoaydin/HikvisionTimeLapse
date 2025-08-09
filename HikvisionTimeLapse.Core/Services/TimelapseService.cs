@@ -111,8 +111,27 @@ public sealed class TimelapseService : ITimelapseService
                     return (false, null, "Seçilen kameralar için fotoğraf bulunamadı");
                 }
 
-                // Interleave by filename (time) across cameras
-                allImages = allImages.OrderBy(p => p).ToList();
+                // Interleave strictly by timestamp parsed from path: .../{cameraId}/YYYY-MM-DD/HH-mm-ss.jpg
+                DateTime? TryGetTimestamp(string path)
+                {
+                    try
+                    {
+                        var file = System.IO.Path.GetFileNameWithoutExtension(path);
+                        if (!DateTime.TryParseExact(file, "HH-mm-ss", null, System.Globalization.DateTimeStyles.None, out var time)) return null;
+                        var dayDir = System.IO.Path.GetDirectoryName(path);
+                        var dayName = System.IO.Path.GetFileName(dayDir!);
+                        if (!DateTime.TryParseExact(dayName, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None, out var day)) return null;
+                        return new DateTime(day.Year, day.Month, day.Day, time.Hour, time.Minute, time.Second, DateTimeKind.Local);
+                    }
+                    catch { return null; }
+                }
+
+                allImages = allImages
+                    .Select(p => new { Path = p, Ts = TryGetTimestamp(p) })
+                    .Where(x => x.Ts.HasValue)
+                    .OrderBy(x => x.Ts!.Value)
+                    .Select(x => x.Path)
+                    .ToList();
 
                 Directory.CreateDirectory(settings.OutputDirectory);
                 var first = Path.GetFileName(Path.GetDirectoryName(allImages.First()) ?? string.Empty);

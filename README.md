@@ -62,7 +62,7 @@ Modern, Windows Forms tabanlı bir uygulama ile Hikvision (veya RTSP uyumlu) IP 
 - Minimize → tray; X → kapanış.
 
 ### Yapılandırma Dosyaları
-- `settings.json` uygulama çalışma dizinine kopyalanır (projede tanımlıdır).
+- `settings.json` uygulama çalışma dizinine kopyalanır (projede tanımlıdır). Düz metin kimlik bilgilerini depoda tutmayın; dağıtım sonrası kullanıcı tarafından doldurulmasını öneririz.
 - Örnek:
   ```json
   {
@@ -99,6 +99,11 @@ Modern, Windows Forms tabanlı bir uygulama ile Hikvision (veya RTSP uyumlu) IP 
   - Güvenlik duvarı ve port 554 erişimine izin verin.
 - Video yazma hatası: H264 decoder/encoder yoksa MP4V/XVID fallback çalışır. Yine de başarısızsa OpenCV codec desteğini kurun.
 - Quartz tetikleyici çakışması: Rescheduling logic aktif; saatler UI’da tekilleştirilir.
+ - Testlerde gerçek kamera bilgileri: `dotnet test` öncesi ortam değişkenlerini ayarlayın:
+   - Windows PowerShell:
+     ```powershell
+     $env:CAM_RTSP="rtsp://<ip>:554/Streaming/Channels/101"; $env:CAM_USER="admin"; $env:CAM_PASS="password"; dotnet test -c Release
+     ```
 
 ---
 
